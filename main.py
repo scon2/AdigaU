@@ -22,42 +22,44 @@ class Spot(BaseModel):
 
 db = []
 
-def load_data_from_json(file_path: str):
+def load_data_from_json(data: list[dict]):
     global db
     max_id = max((spot.id for spot in db), default=0) if db else 0
 
-    with open(file_path, 'r', encoding='utf-8') as file:
-        data = json.load(file)
-        for item in data:
-            max_id += 1
-            # 필드 기본값 설정
-            default_values = {
-                "id": max_id,
-                "name": None,
-                "location": None,
-                "time": None,
-                "tags": None,
-                "description": None,
-                "category": None,
-                "isVideo": None,
-                "likes": None,
-                "like_ratio": None,
-                "img_url": None
-            }
+    # with open(file_path, 'r', encoding='utf-8') as file:
+    #     data = json.load(file)
+    for item in data:
+        max_id += 1
+        # 필드 기본값 설정
 
-            # 필드 매칭 및 기본값 적용
-            item = {key: item.get(key, default) if item.get(key) is not None else default for key, default in default_values.items()}
-            spot = Spot(**item)
-            db.append(spot)
+        # default_values = {
+        #     "id": max_id,
+        #     "name": None,
+        #     "location": None,
+        #     "time": None,
+        #     "tags": None,
+        #     "description": None,
+        #     "category": None,
+        #     "isVideo": None,
+        #     "likes": None,
+        #     "like_ratio": None,
+        #     "img_url": None
+        #     }
+
+        # 필드 매칭 및 기본값 적용
+        # item = {key: item.get(key, default) if item.get(key) is not None else default for key, default in default_values.items()}
+        item['id'] = max_id
+        spot = Spot(**item)
+        db.append(spot)
 
 @app.get("/")
 async def message():
-    return '어디가유 데이터 서버입니다. 확인용'
+    return '어디가유 데이터 서버입니다. 확인용2'
 
 @app.post("/load-data/")
-def load_data(file_path: str):
+def load_data(file: list):
     try:
-        load_data_from_json(file_path)
+        load_data_from_json(file)
         return {"message": "Data loaded successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
