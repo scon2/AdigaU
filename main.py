@@ -1,7 +1,6 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from fastapi import FastAPI, HTTPException, Body
+from pydantic import BaseModel
 from typing import List, Optional
-import json
 
 app = FastAPI()
 
@@ -10,7 +9,7 @@ class Spot(BaseModel):
     name: Optional[str] = None
     location: Optional[str] = None
     time: Optional[str] = None
-    tags: Optional[list[str]] = None
+    tags: Optional[List[str]] = None
     description: Optional[str] = None
     category: Optional[str] = None
     isVideo: Optional[bool] = None
@@ -18,57 +17,32 @@ class Spot(BaseModel):
     like_ratio: Optional[float] = None
     img_url: Optional[str] = None
 
-#여기 부터 복붙
+db: List[Spot] = []
 
-db = []
-
-def load_data_from_json(data: list[dict]):
+def load_data_from_json(data: List[Spot]):
     global db
-    max_id = max((spot.id for spot in db), default=0) if db else 0
-
-    # with open(file_path, 'r', encoding='utf-8') as file:
-    #     data = json.load(file)
+    max_id = max((spot.id for spot in db if spot.id is not None), default=0)
     for item in data:
         max_id += 1
-        # 필드 기본값 설정
-
-        # default_values = {
-        #     "id": max_id,
-        #     "name": None,
-        #     "location": None,
-        #     "time": None,
-        #     "tags": None,
-        #     "description": None,
-        #     "category": None,
-        #     "isVideo": None,
-        #     "likes": None,
-        #     "like_ratio": None,
-        #     "img_url": None
-        #     }
-
-        # 필드 매칭 및 기본값 적용
-        # item = {key: item.get(key, default) if item.get(key) is not None else default for key, default in default_values.items()}
-        item['id'] = max_id
-        spot = Spot(**item)
-        db.append(spot)
+        item.id = max_id
+        db.append(item)
 
 @app.get("/")
 async def message():
-    return '어디가유 데이터 서버입니다. 확인용2'
+    return '어디가유 데이터 서버입니다. 확인용 3'
 
 @app.post("/load-data/")
-def load_data(file: list):
+def load_data(data: List[Spot]):
     try:
-        load_data_from_json(file)
+        load_data_from_json(data)
         return {"message": "Data loaded successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/spots/")
 def create_spot(spot: Spot):
-    # 새로운 id 자동 할당
     if db:
-        max_id = max(spot.id for spot in db if spot.id is not None)
+        max_id = max(s.id for s in db if s.id is not None)
         spot.id = max_id + 1
     else:
         spot.id = 1
