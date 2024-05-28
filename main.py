@@ -26,7 +26,10 @@ db_restaurants: List[Spot] = []
 
 def load_data_from_json(data: List[Spot]):
     global db
-    data = sorted(data, key=lambda x: x['likes'], reverse=True)
+    global db_cafes
+    global db_pubs
+    global db_restaurants
+    data = sorted(data, key=lambda x: x['like_ratio'], reverse=True)
     max_id = max((spot.id for spot in db if spot.id is not None), default=0)
     for item in data:
         max_id += 1
