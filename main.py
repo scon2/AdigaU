@@ -39,8 +39,9 @@ def load_data_from_json(file_path: str):
                 "tags": None,
                 "description": None,
                 "category": None,
-                "like": None,
                 "isVideo": None,
+                "likes": None,
+                "like_ratio": None,
                 "img_url": None
             }
 
@@ -51,7 +52,7 @@ def load_data_from_json(file_path: str):
 
 @app.get("/")
 async def message():
-    return '어디가유 데이터 서버입니다. 확인용3'
+    return '어디가유 데이터 서버입니다. 확인용'
 
 @app.post("/load-data/")
 def load_data(file_path: str):
