@@ -18,26 +18,27 @@ class Spot(BaseModel):
     img_url: Optional[str] = None
 
 db: List[Spot] = []
-db_cafes: List[Spot] =[]
-db_restaurants: List[Spot] =[]
-db_pubs: List[Spot] =[]
+db_cafes: List[Spot] = []
+db_pubs: List[Spot] = []
+db_restaurants: List[Spot] = []
 
-def read_items_by_category(category:str):
-    for i in db:
-        if i[category] == 'cafes':
-            db_cafes.append(i)
-        elif i[category] == 'restaurants':
-            db_restaurants.append(i)
-        elif i[category] == 'pubs':
-            db_pubs.append(i)
+
 
 def load_data_from_json(data: List[Spot]):
     global db
+    data = sorted(data, key=lambda x: x['likes'], reverse=True)
     max_id = max((spot.id for spot in db if spot.id is not None), default=0)
     for item in data:
         max_id += 1
         item.id = max_id
         db.append(item)
+    for i in db:
+        if i['category'] == 'cafes':
+            db_cafes.append(i)
+        elif i['category'] == 'restaurants':
+            db_restaurants.append(i)
+        elif i['category'] == 'pubs':
+            db_pubs.append(i)
 
 @app.get("/")
 async def message():
@@ -61,17 +62,19 @@ def create_spot(spot: Spot):
 
     db.append(spot)
     return spot
+
 @app.get("/spots/cafes")
-def category_by_cafes():
+def get_cafes():
     return db_cafes
 
 @app.get("/spots/restaurants")
-def category_by_restaurants():
+def get_restaurants():
     return db_restaurants
 
 @app.get("/spots/pubs")
-def category_by_pubs():
+def get_pubs():
     return db_pubs
+
 
 
 @app.get("/spots/")
