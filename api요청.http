@@ -1,0 +1,6 @@
+POST https://port-0-adiga-u-ss7z32llwfxpe6k.sel5.cloudtype.app/load-data/
+Content-Type : application/json
+
+{
+    "file_path": "C:\Users\ChoJunseop\Downloads\processed_data.json"
+}
