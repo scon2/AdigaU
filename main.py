@@ -29,18 +29,18 @@ def load_data_from_json(data: List[Spot]):
     global db_cafes
     global db_pubs
     global db_restaurants
-    data = sorted(data, key=lambda x: x['like_ratio'], reverse=True)
+    data = sorted(data, key=lambda x: x.like_ratio, reverse=True)
     max_id = max((spot.id for spot in db if spot.id is not None), default=0)
     for item in data:
         max_id += 1
         item.id = max_id
         db.append(item)
     for i in db:
-        if i['category'] == 'cafes':
+        if i.category == 'cafes':
             db_cafes.append(i)
-        elif i['category'] == 'restaurants':
+        elif i.category == 'restaurants':
             db_restaurants.append(i)
-        elif i['category'] == 'pubs':
+        elif i.category == 'pubs':
             db_pubs.append(i)
 
 @app.get("/")
